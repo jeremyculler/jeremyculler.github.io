@@ -1,8 +1,208 @@
-<html>
-    <head>
-        <link rel="stylesheet" type="text/css" href="./index.css">
-        <div class="test-thing">
-            BLAH BLAG
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Key Listener</title>
+  </head>
+  <body>
+    <style>
+      ul {
+        list-style-type: none;
+      }
+      button {
+        width: 180px;
+        height: 32px;
+      }
+
+      #reset {
+        background-color: lightpink;
+      }
+
+      .result {
+        max-width: 1000px;
+        width: 90%;
+        word-break: break-word;
+        white-space: normal;
+        max-height: 320px;
+        overflow-y: scroll;
+        font-family: sans-serif;
+        font-size: 14px;
+        margin-bottom: 2px;
+      }
+
+      .button-container {
+        display: flex;
+        align-items: center;
+        margin-left: 40px;
+      }
+    </style>
+    <ul>
+      <li>
+        <h3> e.which </h3>
+      </li>
+      <li>
+        <div id="which-results" class="result">
+            []
         </div>
-    </head>
+      </li>
+      <button id="copy-which"> Copy Which List </button>
+    </ul>
+    <ul>
+      <li>
+        <h3> e.key </h3>
+      </li>
+      <li>
+        <div id="key-results" class="result">
+            []
+        </div>
+      </li>
+      <button id="copy-key"> Copy Key List </button>
+    </ul>
+    <ul>
+      <li>
+        <h3> Event List </h3>
+      </li>
+      <li>
+        <div id="event-results" class="result">
+          []
+        </div>
+      </li>
+      <button id="copy-events"> Copy Event List </button>
+      <button id="log-events"> console.log(events) </button>
+    </ul>
+    <br>
+    <div class="button-container">
+        <button id="reset"> Reset </button>
+    </ul>
+  </body>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script>
+        let which = [];
+        let key = [];
+        let events = [];
+
+        copyToClipboard = (element) => {
+          let $temp = $("<input>");
+          $("body").append($temp);
+          $temp.val($(element).text()).select();
+          document.execCommand("copy");
+          $temp.remove();
+        }
+
+        const toJsonableEvents = (events) => {
+          // returns event data without cyclical structures that cannot be serialized
+
+          return events.map(e => {
+            const {
+              altKey,
+              bubbles,
+              cancelBubble,
+              cancelable,
+              charCode,
+              code,
+              composed,
+              ctrlKey,
+              currentTarget,
+              defaultPrevented,
+              detail,
+              eventPhase,
+              isComposing,
+              isTrusted,
+              key,
+              keyCode,
+              location,
+              metaKey,
+              repeat,
+              returnValue,
+              shiftKey,
+              srcElement,
+              target,
+              timeStamp,
+              type,
+              which,
+            } = event;
+
+            return {
+              altKey,
+              bubbles,
+              cancelBubble,
+              cancelable,
+              charCode,
+              code,
+              composed,
+              ctrlKey,
+              currentTarget,
+              defaultPrevented,
+              detail,
+              eventPhase,
+              isComposing,
+              isTrusted,
+              key,
+              keyCode,
+              location,
+              metaKey,
+              repeat,
+              returnValue,
+              shiftKey,
+              srcElement,
+              target,
+              timeStamp,
+              type,
+              which,
+            }
+          })
+        }
+
+        const updateUI = () => {
+
+          $('#which-results').html(
+            JSON.stringify(which)
+          );
+
+          $('#key-results').html(
+
+            JSON.stringify(key)
+          );
+
+          $('#event-results').html(
+            JSON.stringify(toJsonableEvents(events))
+          );
+        }
+
+        $(document).keydown(function(e) {
+            which.push(e.which);
+            key.push(e.key);            
+            events.push(event);
+
+            //avoid keyboard shortcuts
+            e.preventDefault();
+
+            updateUI();
+        })
+
+        $('#reset').click(() => {
+          which = [];
+          key = [];
+          events = [];
+          updateUI();
+        })
+
+        $('#log-events').click(() => {
+          console.log(events);
+        })
+        
+        $('#copy-which').click(() => {
+          copyToClipboard($('#which-results'))
+        })
+
+        $('#copy-key').click(() => {
+          copyToClipboard($('#key-results'))
+
+        })
+
+        $('#copy-events').click(() => {
+          copyToClipboard($('#event-results'))
+        })
+
+  </script>
 </html>
