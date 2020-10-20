@@ -5,7 +5,12 @@
     <title>Key Listener</title>
   </head>
   <body>
+    <a id="download-anchor-element"></a>
     <style>
+      #download-anchor-element {
+        display: none;
+      }
+
       ul {
         list-style-type: none;
       }
@@ -35,6 +40,10 @@
         align-items: center;
         margin-left: 40px;
       }
+
+      .save {
+        background-color: lightsteelblue;
+      }
     </style>
     <ul>
       <li>
@@ -46,6 +55,7 @@
         </div>
       </li>
       <button id="copy-which"> Copy Which List </button>
+      <button id="save-which" class="save"> Save Which List </button>
     </ul>
     <ul>
       <li>
@@ -57,6 +67,7 @@
         </div>
       </li>
       <button id="copy-key"> Copy Key List </button>
+      <button id="save-key" class="save"> Save Key List </button>
     </ul>
     <ul>
       <li>
@@ -68,6 +79,7 @@
         </div>
       </li>
       <button id="copy-events"> Copy Event List </button>
+      <button id="save-events" class="save"> Save Event List </button>
       <button id="log-events"> console.log(events) </button>
     </ul>
     <br>
@@ -87,6 +99,15 @@
           $temp.val($(element).text()).select();
           document.execCommand("copy");
           $temp.remove();
+        }
+
+        saveAsFile = (dataObject, title) => {
+          const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataObject));
+          const dlAnchorElem = document.getElementById('download-anchor-element');
+
+          dlAnchorElem.setAttribute("href", dataStr);
+          dlAnchorElem.setAttribute("download", `${title}-${new Date().toString().replaceAll(" ", "-")}.json`);
+          dlAnchorElem.click();
         }
 
         const toJsonableEvents = (events) => {
@@ -202,6 +223,19 @@
 
         $('#copy-events').click(() => {
           copyToClipboard($('#event-results'))
+        })
+
+
+        $('#save-which').click(() => {
+            saveAsFile(which, 'which')
+        })
+
+        $('#save-key').click(() => {
+          saveAsFile(which, 'key')
+        })
+
+        $('#save-events').click(() => {
+          saveAsFile(toJsonableEvents(events), 'events')
         })
 
   </script>
