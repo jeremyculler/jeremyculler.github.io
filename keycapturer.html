@@ -110,11 +110,9 @@
           dlAnchorElem.click();
         }
 
-        const toJsonableEvents = (events) => {
+        const toJsonableEvent = (event) => {
           // returns event data without cyclical structures that cannot be serialized
-
-          return events.map(e => {
-            const {
+          const {
               altKey,
               bubbles,
               cancelBubble,
@@ -171,7 +169,6 @@
               type,
               which,
             }
-          })
         }
 
         const updateUI = () => {
@@ -186,14 +183,14 @@
           );
 
           $('#event-results').html(
-            JSON.stringify(toJsonableEvents(events))
+            JSON.stringify(events)
           );
         }
 
         $(document).keydown(function(e) {
             which.push(e.which);
             key.push(e.key);            
-            events.push(event);
+            events.push(JSON.parse(JSON.stringify(toJsonableEvent(e))));
 
             //avoid keyboard shortcuts
             e.preventDefault();
@@ -235,7 +232,7 @@
         })
 
         $('#save-events').click(() => {
-          saveAsFile(toJsonableEvents(events), 'events')
+          saveAsFile(events, 'events')
         })
 
   </script>
